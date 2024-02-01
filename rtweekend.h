@@ -32,6 +32,12 @@ inline double random_double(double min, double max)
   // Returns a random real in [min,max).
   return min + (max - min) * random_double();
 }
+
+inline int random_int(int min, int max)
+{
+  // 返回[min,max]范围内的随机整数。
+  return int(random_double(min, max + 1));
+}
 // Common Headers
 
 #include "ray.h"
