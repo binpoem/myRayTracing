@@ -27,6 +27,16 @@ public:
     y = interval(box0.y, box1.y);
     z = interval(box0.z, box1.z);
   }
+  aabb pad()
+  {
+    // 返回一个没有边小于某个 delta 的 AABB，如果需要则填充。
+    double delta = 0.0001;
+    interval new_x = (x.size() >= delta) ? x : x.expand(delta);
+    interval new_y = (y.size() >= delta) ? y : y.expand(delta);
+    interval new_z = (z.size() >= delta) ? z : z.expand(delta);
+
+    return aabb(new_x, new_y, new_z);
+  }
   int longest_axis() const
   {
     // 返回边界框的最长轴的索引。
