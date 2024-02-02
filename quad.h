@@ -1,6 +1,7 @@
 #ifndef QUAD_H
 #define QUAD_H
 
+#include "hittable_list.h"
 #include "rtweekend.h"
 
 #include "hittable.h"
@@ -74,5 +75,29 @@ private:
   shared_ptr<material> mat;
   aabb bbox;
 };
+
+inline shared_ptr<hittable_list> box(const point3 &a, const point3 &b, shared_ptr<material> mat)
+{
+  // 返回一个包含两个对角顶点a和b的3D盒子（六个面）。
+
+  auto sides = make_shared<hittable_list>();
+
+  // 构造两个对角顶点，具有最小和最大的坐标。
+  auto min = point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
+  auto max = point3(fmax(a.x(), b.x()), fmax(a.y(), b.y()), fmax(a.z(), b.z()));
+
+  auto dx = vec3(max.x() - min.x(), 0, 0);
+  auto dy = vec3(0, max.y() - min.y(), 0);
+  auto dz = vec3(0, 0, max.z() - min.z());
+
+  sides->add(make_shared<quad>(point3(min.x(), min.y(), max.z()), dx, dy, mat));// 前
+  sides->add(make_shared<quad>(point3(max.x(), min.y(), max.z()), -dz, dy, mat));// 右
+  sides->add(make_shared<quad>(point3(max.x(), min.y(), min.z()), -dx, dy, mat));// 后
+  sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()), dz, dy, mat));// 左
+  sides->add(make_shared<quad>(point3(min.x(), max.y(), max.z()), dx, -dz, mat));// 顶
+  sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()), dx, dz, mat));// 底
+
+  return sides;
+}
 
 #endif
